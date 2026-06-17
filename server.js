@@ -1,4 +1,8 @@
-require('dotenv').config();
+// Nyalakan dotenv hanya jika berjalan di komputer lokal (bukan production)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const cors = require('cors');
 const { sequelize } = require('./models');
@@ -35,14 +39,18 @@ if (process.env.NODE_ENV !== 'test') {
   sequelize.sync({ alter: true })
     .then(() => {
       console.log('Database terhubung & tersinkronisasi');
-      app.listen(PORT, () => {
-        console.log(`Server Backend jalan di http://localhost:${PORT}`);
-      });
+      
+      // Vercel tidak butuh app.listen, ini hanya untuk lokal
+      if (process.env.NODE_ENV !== 'production') {
+        app.listen(PORT, () => {
+          console.log(`Server Backend jalan di http://localhost:${PORT}`);
+        });
+      }
     })
     .catch(err => {
       console.log('Gagal sync database:', err);
     });
 }
 
-// WAJIB DITAMBAHKAN: Export app agar bisa dipanggil oleh file test (Supertest)
+// WAJIB DITAMBAHKAN: Export app agar bisa dipanggil oleh file test (Supertest) dan Vercel
 module.exports = app;
