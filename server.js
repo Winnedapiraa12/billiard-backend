@@ -34,22 +34,25 @@ app.use((err, req, res, next) => {
 // Start Server
 const PORT = process.env.PORT || 5000;
 
-// CEK ENVIRONMENT: Jangan jalankan koneksi DB dan server jika sedang mode testing
-if (process.env.NODE_ENV !== 'test') {
+// ========================================================================
+// MANAJEMEN DATABASE & SERVER
+// ========================================================================
+
+// HANYA LAKUKAN SYNC & LISTEN DI LOKAL. JANGAN DI VERCEL!
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
   sequelize.sync({ alter: true })
     .then(() => {
       console.log('Database terhubung & tersinkronisasi');
-      
-      // Vercel tidak butuh app.listen, ini hanya untuk lokal
-      if (process.env.NODE_ENV !== 'production') {
-        app.listen(PORT, () => {
-          console.log(`Server Backend jalan di http://localhost:${PORT}`);
-        });
-      }
+      app.listen(PORT, () => {
+        console.log(`Server Backend jalan di http://localhost:${PORT}`);
+      });
     })
     .catch(err => {
       console.log('Gagal sync database:', err);
     });
+} else if (process.env.NODE_ENV === 'production') {
+  // Jika di Vercel (production), langsung informasikan tanpa melakukan sync
+  console.log('Mode Production berjalan di Vercel. Database siap diakses.');
 }
 
 // WAJIB DITAMBAHKAN: Export app agar bisa dipanggil oleh file test (Supertest) dan Vercel
