@@ -1,18 +1,16 @@
 // Konfigurasi koneksi database MySQL menggunakan Sequelize
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
 
 // Setup konfigurasi dasar
 const dbOptions = {
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT || 3306, // Menambahkan deteksi port khusus Aiven
+  port: process.env.DB_PORT || 3306,
   dialect: 'mysql',
   logging: false, // Matikan log query agar terminal bersih
 };
 
 // Logika Pintar: 
 // Nyalakan konfigurasi keamanan SSL HANYA jika terhubung ke Aiven atau di Vercel (production).
-// Ini agar XAMPP di laptop kamu tetap bisa berjalan normal tanpa error SSL.
 if (process.env.NODE_ENV === 'production' || (process.env.DB_HOST && process.env.DB_HOST.includes('aivencloud'))) {
   dbOptions.dialectOptions = {
     ssl: {
