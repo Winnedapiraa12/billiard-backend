@@ -1,5 +1,6 @@
 // Konfigurasi koneksi database MySQL menggunakan Sequelize
 const { Sequelize } = require('sequelize');
+require('mysql2'); // <-- Memaksa Vercel membawa driver MySQL agar tidak error
 
 // Setup konfigurasi dasar
 const dbOptions = {
