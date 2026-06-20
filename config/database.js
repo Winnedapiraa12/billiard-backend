@@ -10,9 +10,8 @@ const dbOptions = {
   logging: false, // Matikan log query agar terminal bersih
 };
 
-// Logika Pintar: 
-// Nyalakan konfigurasi keamanan SSL HANYA jika terhubung ke Aiven atau di Vercel (production).
-if (process.env.NODE_ENV === 'production' || (process.env.DB_HOST && process.env.DB_HOST.includes('aivencloud'))) {
+// Nyalakan SSL tanpa syarat jika di Production (Vercel)
+if (process.env.NODE_ENV === 'production') {
   dbOptions.dialectOptions = {
     ssl: {
       require: true,
