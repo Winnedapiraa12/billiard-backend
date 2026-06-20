@@ -20,6 +20,18 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to BilliardPro API' });
 });
 
+// ========================================================================
+// RUTE RAHASIA UNTUK MEMBUAT TABEL DI AIVEN (Buka sekali saja di browser)
+// ========================================================================
+app.get('/api/setup-db', async (req, res) => {
+  try {
+    await sequelize.sync({ alter: true });
+    res.status(200).json({ message: "YEAY! Semua tabel berhasil dibuat di Database Aiven!" });
+  } catch (error) {
+    res.status(500).json({ message: "Gagal membuat tabel", error: error.message });
+  }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/meja', mejaRoutes);
 app.use('/api/reservasi', reservasiRoutes);
