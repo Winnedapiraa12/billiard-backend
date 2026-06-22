@@ -32,6 +32,23 @@ app.get('/api/setup-db', async (req, res) => {
   }
 });
 
+// ========================================================================
+// RUTE SAKTI UNTUK MENAIKKAN PANGKAT USER MENJADI ADMIN
+// Cara pakai: buka di browser -> url-backend.vercel.app/api/make-admin/email-kamu@gmail.com
+// ========================================================================
+app.get('/api/make-admin/:email', async (req, res) => {
+  try {
+    const userEmail = req.params.email;
+    // Mengubah kolom role menjadi 'admin' di tabel users secara langsung
+    await sequelize.query("UPDATE users SET role = 'admin' WHERE email = ?", {
+      replacements: [userEmail]
+    });
+    res.status(200).json({ message: `YEAY! Akun ${userEmail} resmi diangkat menjadi Admin secara permanen!` });
+  } catch (error) {
+    res.status(500).json({ message: "Gagal menaikkan pangkat", error: error.message });
+  }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/meja', mejaRoutes);
 app.use('/api/reservasi', reservasiRoutes);
